@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { PlusCircle, Calendar, MapPin, Loader2 } from 'lucide-react';
-import { format, set } from 'date-fns';
+import { format } from 'date-fns';
 import { useAuthStore } from '../store/authStore';
 import type { Trip } from '../types';
 import { destCollection, tripsCollection } from '../firebaseConfig';
@@ -16,95 +16,49 @@ export function Dashboard() {
   useEffect(() => {
     async function fetchTrips() {
       try {
+        // Query to get trips for the logged-in user
+        const tripsQuery = query(tripsCollection, where('userId', '==', user?.id));
+        const tripsDoc = await getDocs(tripsQuery);
 
-
-        const tripsquery = query(tripsCollection, where('userId', '==', user?.id));
-        const tripsDoc = await getDocs(tripsquery);
-
-        const trips : Trip[] = tripsDoc.docs.map((doc) => {
-          const data = doc.data();
-          console.log("data", (data.start_date as Timestamp).toDate());
-          return {
-            id: doc.id,
-            title: data.title,
-            description: data.description ,
-            startDate: (data.start_date as Timestamp).toDate(),
-            endDate: (data.end_date as Timestamp).toDate(),
-            createdAt: data.created_at,
-            updatedAt: data.created_at,
-            userId: data.userId,
-            destinations: data.destinations || [],
-          };
-        })
-        console.log("trips", trips);
-
-        const TripsWIthDes = trips.map(async (trip) => {
-          const destinationsQuery = query(destCollection, where('tripId', '==', trip.id));
-          const destinationsDoc = await getDocs(destinationsQuery);
-          const destinations = destinationsDoc.docs.map((doc) => {
+        // Map through the trips and fetch destinations concurrently
+        const fetchedTrips: Trip[] = await Promise.all(
+          tripsDoc.docs.map(async (doc) => {
             const data = doc.data();
-            
-            return {
+            const trip = {
               id: doc.id,
-              address: data.address,
-              city: data.city,
-              flightNumber: data.flightNumber,
-              hotel: data.hotel,
-              name: data.name,
-              tripId: data.tripId,
+              title: data.title,
+              description: data.description,
+              startDate: (data.start_date as Timestamp).toDate(),
+              endDate: (data.end_date as Timestamp).toDate(),
+              createdAt: data.created_at,
+              updatedAt: data.created_at,
+              userId: data.userId,
+              destinations: [], // Initially empty
             };
-          });
-          return {
-            ...trip,
-            destinations,
-          };
-        });
-        const tripsWithDestinations = await Promise.all(TripsWIthDes);
-        setTrips(tripsWithDestinations);
-        console.log("tripsWithDestinations", tripsWithDestinations);
-        
-//        setTrips(tripsWithDestinations);
 
-        // const { data, error } = await supabase
-        //   .from('trips')
-        //   .select(`
-        //     id,
-        //     title,
-        //     description,
-        //     start_date,
-        //     end_date,
-        //     created_at,
-        //     destinations (
-        //       id,
-        //       name,
-        //       start_date,
-        //       end_date
-        //     )
-        //   `)
-        //   .order('start_date', { ascending: true });
+            // Fetch destinations for the current trip
+            const destinationsQuery = query(destCollection, where('tripId', '==', doc.id));
+            const destinationsDoc = await getDocs(destinationsQuery);
+            const destinations = destinationsDoc.docs.map((destDoc) => {
+              const destData = destDoc.data();
+              return {
+                id: destDoc.id,
+                address: destData.address,
+                city: destData.city,
+                flightNumber: destData.flightNumber,
+                hotel: destData.hotel,
+                name: destData.name,
+                tripId: destData.tripId,
+              };
+            });
 
-        // if (error) throw error;
+            // Return the trip with its destinations
+            return { ...trip, destinations };
+          })
+        );
 
-        // if (user) {
-        //   setTrips(
-        //     (data || []).map((trip: any) => ({
-        //       id: trip.id,
-        //       title: trip.title,
-        //       description: trip.description,
-        //       startDate: trip.start_date,
-        //       endDate: trip.end_date,
-        //       createdAt: trip.created_at,
-        //       updatedAt: trip.created_at, // Assuming updatedAt is the same as createdAt for now
-        //       userId: user.id, // Assuming userId is the current user's id
-        //       destinations: trip.destinations.map((destination: any) => ({
-        //         id: destination.id,
-        //         name: destination.name,
-        //         startDate: destination.start_date,
-        //         endDate: destination.end_date,
-        //       })),
-        //     }))
-        //   );
-        // }
+        // Set the state once all trips and destinations are fetched
+        setTrips(fetchedTrips);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch trips');
       } finally {
@@ -112,8 +66,10 @@ export function Dashboard() {
       }
     }
 
-    fetchTrips();
-  }, []);
+    if (user) {
+      fetchTrips();
+    }
+  }, [user]);
 
   if (!user) {
     return <Navigate to="/login" replace />;

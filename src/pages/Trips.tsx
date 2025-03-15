@@ -30,7 +30,6 @@ export function Trips() {
       }
       try {
 
-
         const tripsquery = doc(db, 'trips', tripId);
         const tripsDoc = await getDoc(tripsquery);
         const data = tripsDoc.data();

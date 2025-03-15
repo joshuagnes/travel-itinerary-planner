@@ -9,7 +9,7 @@ export function Home() {
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900">
           Plan Your Perfect Journey
         </h1>
-        <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="mt-4 text-xl text-black-600 max-w-2xl mx-auto">
           Create detailed travel itineraries, track your destinations, and share your adventures with friends and family.
         </p>
         <div className="mt-8">
