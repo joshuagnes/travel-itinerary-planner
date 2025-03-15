@@ -39,9 +39,12 @@ const TripDetailsDialog = ({ isOpen, onClose, onConfirm }: { isOpen: boolean; on
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-96 bg-white rounded-lg shadow-lg p-6">
+        
         <h2 className="text-xl font-bold mb-4">Trip Details</h2>
+        
         <form>
           <div className="mb-3">
+            
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Destination:</label>
             <input
               type="text"
