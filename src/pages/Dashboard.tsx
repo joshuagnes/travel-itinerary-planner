@@ -33,7 +33,7 @@ export function Dashboard() {
               createdAt: data.created_at,
               updatedAt: data.created_at,
               userId: data.userId,
-              destinations: [], // Initially empty
+              destinations: [], 
             };
 
             // Fetch destinations for the current trip

@@ -1,137 +1,203 @@
 import { FormEvent, useState } from 'react';
-import { doc, setDoc, DocumentReference } from "firebase/firestore";
-import { auth, destCollection, tripsCollection } from '../firebaseConfig';
+import { doc, runTransaction } from 'firebase/firestore';
+import { auth, db, destCollection, tripsCollection } from '../firebaseConfig';
 import TripDetailsDialog, { TripDetails } from './TripDetailsDialog';
 import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+interface FormState {
+  tripName: string;
+  startDate: string;
+  endDate: string;
+  notes: string;
+  tripData: TripDetails[];
+}
 
 export const NewTrip = () => {
-  const [tripName, setTripName] = useState('');
-  const [destination, setDestination] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [notes, setNotes] = useState('');
+  const [formState, setFormState] = useState<FormState>({
+    tripName: '',
+    startDate: '',
+    endDate: '',
+    notes: '',
+    tripData: [],
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [tripData, setTripData] = useState<TripDetails[]>([]);
   const navigate = useNavigate();
 
+  const updateFormState = (updates: Partial<FormState>) => {
+    setFormState(prev => ({ ...prev, ...updates }));
+  };
 
-  const openDialog = () => setIsDialogOpen(true);
-  const closeDialog = () => setIsDialogOpen(false);
   const handleConfirm = (details: TripDetails) => {
-    setTripData([...tripData, { ...details }]);
-    console.log("Trip Details:", tripData); //Do something with the trip data.  Add it to Firestore, etc.
+    updateFormState({ tripData: [...formState.tripData, details] });
+    setIsDialogOpen(false);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!auth.currentUser) {
+      setError('You must be logged in to create a trip');
+      return;
+    }
+
+    if (formState.tripData.length === 0) {
+      setError('Please add at least one destination');
+      return;
+    }
+
+    if (new Date(formState.startDate) > new Date(formState.endDate)) {
+      setError('End date must be after start date');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
 
     try {
+      await runTransaction(db, async (transaction) => {
+        const tripDocRef = doc(tripsCollection);
+        
+        transaction.set(tripDocRef, {
+          id: tripDocRef.id,
+          title: formState.tripName,
+          description: formState.notes,
+          start_date: new Date(formState.startDate),
+          end_date: new Date(formState.endDate),
+          created_at: new Date(),
+          userId: auth.currentUser?.uid,
+          destinations: [],
+        });
 
-
-      const destinationsRefs: DocumentReference[] = [];
-      tripData.forEach(() => {
-        const newDocRef = doc(destCollection);
-        destinationsRefs.push(newDocRef);
-      });
-      const tripDocRef = doc(tripsCollection);
-      const docRef = await setDoc(tripDocRef, {
-        id: tripDocRef.id,
-        name: tripName,
-        destination: destinationsRefs.map(ref => ref.id), // Store the IDs of the destination documents
-        start_date: new Date(startDate), // Convert to Date object
-        end_date: new Date(endDate),     // Convert to Date object
-        title: notes,
-        created_at: new Date(),          // Add a timestamp
-        userId: auth.currentUser?.uid, // Assuming you have user authentication
-      });
-
-
-
-      tripData.forEach((trip, index) => {
-        const newDocRef = destinationsRefs[index];
-        setDoc(newDocRef, {
-          id: newDocRef.id,
-          address: trip.address,
-          city: trip.city,
-          flightNumber: trip.flightNumber,
-          hotel: trip.hotel,
-          name: trip.name,
-          tripId: tripDocRef.id, // Assuming you want to link this destination to the trip
+        formState.tripData.forEach((trip) => {
+          const destDocRef = doc(destCollection);
+          transaction.set(destDocRef, {
+            ...trip,
+            id: destDocRef.id,
+            tripId: tripDocRef.id,
+          });
         });
       });
 
-      // Optionally, reset the form or show a success message.
-      setTripName('');
-      setDestination('');
-      setStartDate('');
-      setEndDate('');
-      setNotes('');
+      updateFormState({
+        tripName: '',
+        startDate: '',
+        endDate: '',
+        notes: '',
+        tripData: [],
+      });
       navigate('/dashboard');
     } catch (error) {
-      console.error("Error adding document: ", error);
-      // Optionally, display an error message to the user.
+      setError(error instanceof Error ? error.message : 'Failed to create trip');
+      console.error('Error creating trip:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className='w-full bg-white p-8 rounded shadow-md'>
-        <div className='my-4 '>
-          <label htmlFor="tripName">Trip Name:</label>
-          <input className='border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+    <div className="min-h-screen p-8">
+      {error && (
+        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className="w-full bg-white p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-6">Create New Trip</h2>
+
+        <div className="my-4">
+          <label htmlFor="tripName" className="block mb-1">Trip Name:</label>
+          <input
+            className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
             type="text"
             id="tripName"
-            value={tripName}
-            onChange={(e) => setTripName(e.target.value)}
+            value={formState.tripName}
+            onChange={(e) => updateFormState({ tripName: e.target.value })}
             required
+            disabled={isLoading}
           />
         </div>
-        <div className='my-4'>
-          <label htmlFor="destination">Destination:</label>
-          <div className='p-2' onClick={openDialog}>
-            <Plus className='h-4 w-4 text-blue-600' />
-          </div>
 
+        <div className="my-4">
+          <label className="block mb-1">Destinations:</label>
+          {formState.tripData.map((dest, index) => (
+            <div key={index} className="flex items-center space-x-2 mb-2">
+              <span>{dest.name} - {dest.city}</span>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => setIsDialogOpen(true)}
+            className="flex items-center text-blue-600 hover:text-blue-800"
+            disabled={isLoading}
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Add Destination
+          </button>
         </div>
-        <div className='my-4'>
-          <label htmlFor="startDate">Start Date:</label>
+
+        <div className="my-4">
+          <label htmlFor="startDate" className="block mb-1">Start Date:</label>
           <input
-            className='border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
             type="date"
             id="startDate"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            value={formState.startDate}
+            onChange={(e) => updateFormState({ startDate: e.target.value })}
             required
+            disabled={isLoading}
           />
         </div>
-        <div className='my-4'>
-          <label htmlFor="endDate">End Date:</label>
+
+        <div className="my-4">
+          <label htmlFor="endDate" className="block mb-1">End Date:</label>
           <input
-            className='border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
             type="date"
             id="endDate"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+            value={formState.endDate}
+            onChange={(e) => updateFormState({ endDate: e.target.value })}
             required
+            disabled={isLoading}
           />
         </div>
-        <div className='my-4'>
-          <label htmlFor="notes">Notes:</label>
+
+        <div className="my-4">
+          <label htmlFor="notes" className="block mb-1">Notes:</label>
           <textarea
-            className='border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
             id="notes"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+            value={formState.notes}
+            onChange={(e) => updateFormState({ notes: e.target.value })}
+            disabled={isLoading}
           />
         </div>
-        <div className='w-full flex justify-center'>
-          <button type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"        >Add Trip</button>
+
+        <div className="flex justify-end space-x-4">
+          <button
+            type="button"
+            onClick={() => navigate('/dashboard')}
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Creating...' : 'Add Trip'}
+          </button>
         </div>
       </form>
-      <TripDetailsDialog isOpen={isDialogOpen} onClose={closeDialog} onConfirm={handleConfirm} />
+
+      <TripDetailsDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onConfirm={handleConfirm}
+      />
     </div>
   );
 };

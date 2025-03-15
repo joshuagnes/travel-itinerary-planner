@@ -42,7 +42,7 @@ const TripDetailsDialog = ({ isOpen, onClose, onConfirm }: { isOpen: boolean; on
         <h2 className="text-xl font-bold mb-4">Trip Details</h2>
         <form>
           <div className="mb-3">
-            <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Trip Name:</label>
+            <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Destination:</label>
             <input
               type="text"
               id="name"
@@ -53,16 +53,7 @@ const TripDetailsDialog = ({ isOpen, onClose, onConfirm }: { isOpen: boolean; on
             />
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="address" className="block text-gray-700 font-bold mb-2">Address:</label>
-            <input
-              type="text"
-              id="address"
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-          </div>
+          
           <div className="mb-3">
             <label htmlFor="city" className="block text-gray-700 font-bold mb-2">City:</label>
             <input
@@ -93,6 +84,16 @@ const TripDetailsDialog = ({ isOpen, onClose, onConfirm }: { isOpen: boolean; on
               onChange={(e) => setHotel(e.target.value)}
             />
           </div>
+          <div className="mb-3">
+            <label htmlFor="address" className="block text-gray-700 font-bold mb-2">Address:</label>
+            <input
+              type="text"
+              id="address"
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </div>
           <div className="flex justify-end">
             <button
               type="button"
@@ -109,6 +110,8 @@ const TripDetailsDialog = ({ isOpen, onClose, onConfirm }: { isOpen: boolean; on
               Confirm
             </button>
           </div>
+
+          
         </form>
       </div>
     </div>
