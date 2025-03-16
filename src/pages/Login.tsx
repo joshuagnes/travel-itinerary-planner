@@ -4,6 +4,9 @@ import { Plane } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { auth } from '../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import Input from '../components/Input';
+import Button from '../components/Button';
+import LinkComponent from '../components/Link';
 
 export function Login() {
   const [email, setEmail] = useState<string>('');
@@ -52,12 +55,10 @@ export function Login() {
           </h2>
           <p className="mt-2 text-sm text-gray-700">
             Don't have an account?{' '}
-            <Link 
-              to="/signup" 
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              Create one now
-            </Link>
+            <LinkComponent 
+              to='/signup'
+              text='Sign up'
+            />
           </p>
         </div>
 
@@ -69,53 +70,36 @@ export function Login() {
               </div>
             )}
 
-            <div className="space-y-1">
-              <label 
-                htmlFor="email" 
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your email"
-              />
-            </div>
+            <Input label='Email address'
+              htmlFor='email'
+              value={email}
+              setValue={setEmail}
+              id='email'
+              name='email'
+              autoComplete='email'
+              required={true}
+              type='email'
+              placeholder='Enter your email'
+            />
 
-            <div className="space-y-1">
-              <label 
-                htmlFor="password" 
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your password"
-              />
-            </div>
+       
+            <Input label='Password'
+              htmlFor='password'
+              value={password}
+              setValue={setPassword}
+              id='password'
+              name='password'
+              autoComplete='current-password'
+              required={true}
+              type='password'
+              placeholder='Enter your password'
+            />
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
+            <Button 
+              loading={loading}
+              text='Signing in...'
+              conditionalText='Sign in'
+            />
           </form>
         </div>
       </div>

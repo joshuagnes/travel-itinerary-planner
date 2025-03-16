@@ -21,6 +21,9 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import TripDetails from '../components/TripDetails';
+import DestinationDetails from '../components/DestinationDetails';
+import FormControl from '../components/FormControl';
 
 interface Destination {
   id: string;
@@ -292,203 +295,40 @@ export function Trips() {
         </div>
 
         <div className="space-y-6">
-          {/* Trip Name */}
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-              Trip Name
-            </label>
-            <input
-              className={`w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-              }`}
-              type="text"
-              id="title"
-              value={formData.title || ''}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              placeholder="Enter trip name"
-            />
-          </div>
-
-          {/* Destinations */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Destinations
-            </label>
-            {editedDestinations.map((destination, index) => (
-              <div
-                key={destination.id}
-                className="p-4 mb-4 bg-gray-50 rounded-lg shadow-sm"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <label
-                      htmlFor={`name-${index}`}
-                      className="w-28 text-sm font-medium text-gray-700"
-                    >
-                      Destination
-                    </label>
-                    <input
-                      id={`name-${index}`}
-                      className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                        isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                      }`}
-                      type="text"
-                      value={destination.name || ''}
-                      onChange={(e) => handleDestinationChange(e, index, 'name')}
-                      disabled={!isEditing}
-                      placeholder="Destination"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label
-                      htmlFor={`city-${index}`}
-                      className="w-28 text-sm font-medium text-gray-700"
-                    >
-                      City
-                    </label>
-                    <input
-                      id={`city-${index}`}
-                      className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                        isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                      }`}
-                      type="text"
-                      value={destination.city || ''}
-                      onChange={(e) => handleDestinationChange(e, index, 'city')}
-                      disabled={!isEditing}
-                      placeholder="City"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label
-                      htmlFor={`hotel-${index}`}
-                      className="w-28 text-sm font-medium text-gray-700"
-                    >
-                      Hotel
-                    </label>
-                    <input
-                      id={`hotel-${index}`}
-                      className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                        isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                      }`}
-                      type="text"
-                      value={destination.hotel || ''}
-                      onChange={(e) => handleDestinationChange(e, index, 'hotel')}
-                      disabled={!isEditing}
-                      placeholder="Hotel"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label
-                      htmlFor={`address-${index}`}
-                      className="w-28 text-sm font-medium text-gray-700"
-                    >
-                      Address
-                    </label>
-                    <input
-                      id={`address-${index}`}
-                      className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                        isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                      }`}
-                      type="text"
-                      value={destination.address || ''}
-                      onChange={(e) => handleDestinationChange(e, index, 'address')}
-                      disabled={!isEditing}
-                      placeholder="Address"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label
-                      htmlFor={`flightNumber-${index}`}
-                      className="w-28 text-sm font-medium text-gray-700"
-                    >
-                      Flight Number
-                    </label>
-                    <input
-                      id={`flightNumber-${index}`}
-                      className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                        isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                      }`}
-                      type="text"
-                      value={destination.flightNumber || ''}
-                      onChange={(e) =>
-                        handleDestinationChange(e, index, 'flightNumber')
-                      }
-                      disabled={!isEditing}
-                      placeholder="Flight Number"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Start Date */}
-          <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">
-              Start Date
-            </label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                className={`w-full pl-10 p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                  isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                }`}
-                type="date"
-                id="startDate"
-                value={
-                  formData.startDate
-                    ? format(formData.startDate, 'yyyy-MM-dd')
-                    : ''
-                }
-                onChange={handleInputChange}
-                disabled={!isEditing}
-              />
-            </div>
-          </div>
-
-          {/* End Date */}
-          <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">
-              End Date
-            </label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                className={`w-full pl-10 p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                  isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                }`}
-                type="date"
-                id="endDate"
-                value={
-                  formData.endDate
-                    ? format(formData.endDate, 'yyyy-MM-dd')
-                    : ''
-                }
-                onChange={handleInputChange}
-                disabled={!isEditing}
-              />
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Notes
-            </label>
-            <textarea
-              className={`w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition resize-none h-32 ${
-                isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-              }`}
-              id="description"
-              value={formData.description || ''}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              placeholder="Add some notes about your trip..."
-            />
-          </div>
-
-          {/* Back to Dashboard Button */}
+          <TripDetails
+            formData={formData}
+            handleInputChange={handleInputChange}
+            isEditing={isEditing}
+          />
+          <DestinationDetails
+            editedDestinations={editedDestinations}
+            handleDestinationChange={handleDestinationChange}
+            isEditing={isEditing}
+          />
+          <FormControl
+            label="Start Date"
+            id="startDate"
+            type="date"
+            value={formData.startDate ? format(formData.startDate, 'yyyy-MM-dd') : ''}
+            handleInputChange={handleInputChange}
+            isEditing={isEditing}
+          />
+          <FormControl
+            label="End Date"
+            id="endDate"
+            type="date"
+            value={formData.endDate ? format(formData.endDate, 'yyyy-MM-dd') : ''}
+            handleInputChange={handleInputChange}
+            isEditing={isEditing}
+          />
+          <FormControl
+            label="Notes"
+            id="description"
+            type="textarea"
+            value={formData.description || ''}
+            handleInputChange={handleInputChange}
+            isEditing={isEditing}
+          />
           <div className="flex justify-end">
             <Link
               to="/dashboard"
