@@ -2,94 +2,125 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom background with image */
 .bg-home {
-	background-image: url('/background.jpg'); /* Adjust the path */
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-	opacity: 0.9; /* Adjust transparency */
+  background-image: url('/background.jpg'); /* Adjust path as needed */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.9;
 }
 
+/* App container with blue background */
 .app {
-	min-height: 100vh;
-	display: grid;
-	background:#ebfffc
+  @apply min-h-screen flex flex-col items-center p-6 bg-blue-500/85;
 }
 
-.weather {
-	place-self: center;
-	padding: 35px;
-	border-radius: 10px;
-	background-image: linear-gradient(45deg, #5f82db, #4ec5e6);
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
+/* Search bar */
 .search-bar {
-	display: flex;
-	align-items: center;
-	gap: 12px;
+  @apply flex items-center gap-3 mb-10 max-w-xl w-full;
 }
 
 .search-bar input {
-	height: 35px;
-	border: none;
-	outline: none;
-	border-radius: 40px;
-	padding-left: 25px;
-	color: #626262;
-	background: #ebfffc;
-	font-size: 18px;
+  @apply h-12 border-none outline-none rounded-full pl-6 text-gray-600 bg-white/80 text-lg shadow-md focus:ring-2 focus:ring-blue-300 transition-all w-full;
 }
 
 .search-bar img {
-	width: 30px;
-	padding: 8px;
-	border-radius: 50%;
-	background: #ebfffc;
-	cursor: pointer;
+  @apply w-10 p-2 rounded-full bg-white/80 cursor-pointer hover:scale-110 transition-transform;
 }
 
+/* Weather grid layout with increased spacing */
+.weather-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 w-full max-w-7xl;
+}
+
+/* Individual weather card */
+.weather-card {
+  @apply p-6 rounded-2xl bg-white/10 flex flex-col items-center shadow-lg backdrop-blur-md border border-white/20;
+  min-height: 380px; /* Increased height to fit more data */
+}
+
+/* Weather icon with animation */
 .weather-icon {
-	width: 150px;
-	margin: 30px 0;
+  @apply w-20 my-4;
+  animation: weatherFade 1s ease-in-out;
 }
 
+@keyframes weatherFade {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Temperature */
 .temperature {
-	color: white;
-	font-size: 60px;
-	line-height: 1;
+  @apply text-white text-4xl font-bold tracking-tight;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
+/* Location */
 .location {
-	color: white;
-	font-size: 30px;
+  @apply text-white text-xl font-medium mt-2;
 }
 
-.weather-date {
-	width: 100%;
-	margin-top: 40px;
-	color: white;
-	display: flex;
-	justify-content: space-between;
+/* Weather description */
+.description {
+  @apply text-white text-sm italic mt-1;
 }
 
-.weather-date .col {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 10px;
-	font-size: 15px;
+/* Feels like */
+.feels-like {
+  @apply text-white text-sm mt-4 opacity-80;
 }
 
-.weather-date .col span {
-	display: block;
-	font-size: 12px;
-	padding-top: 5px;
+/* Weather data sections (Grid-based alignment) */
+.weather-date,
+.weather-details,
+.sun-times {
+  @apply w-full mt-4 text-white grid grid-cols-2 gap-4;
 }
 
-.weather-date .col img {
-	width: 26px;
-	margin-bottom: 8px;
+.weather-date .col,
+.weather-details .col,
+.sun-times .col {
+  @apply flex flex-col items-center p-2 text-center;
+}
+
+.weather-date .col img,
+.weather-details .col img,
+.sun-times .col img {
+  @apply w-5 mb-1;
+}
+
+.weather-date .col p,
+.weather-details .col p,
+.sun-times .col p {
+  @apply text-sm font-medium;
+}
+
+.weather-date .col span,
+.weather-details .col span,
+.sun-times .col span {
+  @apply block text-xs opacity-80 pt-1;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .weather-card {
+    @apply p-4;
+    min-height: 340px; /* Slightly smaller on mobile */
+  }
+  .temperature {
+    @apply text-3xl;
+  }
+  .location {
+    @apply text-lg;
+  }
+  .weather-date,
+  .weather-details,
+  .sun-times {
+    @apply grid-cols-1 gap-3;
+  }
+  .weather-grid {
+    @apply gap-4;
+  }
 }

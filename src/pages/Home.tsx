@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Calendar, Share2 } from 'lucide-react';
+import LinkComponent from '../components/Link';
 
 export function Home() {
   return (
@@ -67,12 +68,12 @@ export function Home() {
               <p className="mt-4 text-lg text-blue-100">
                 Join thousands of travelers who use TravelPlanner to create unforgettable journeys.
               </p>
-              <Link
+
+              <LinkComponent
                 to="/login"
+                text="Sign In to Begin"
                 className="mt-8 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50"
-              >
-                Sign In to Begin
-              </Link>
+              />
             </div>
           </div>
         </div>
