@@ -7,6 +7,7 @@ import { Signup } from './pages/Signup';
 import { Dashboard } from './pages/Dashboard';
 import { Trips } from './pages/Trips';
 import { NewTrip } from './pages/NewTrip';
+import { FlightDetails } from './pages/FlightDetails';
 import Weather from './pages/Weather';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
 						<Route path="dashboard" element={<Dashboard />} />
 						<Route path="trips/new" element={<NewTrip />} />
 						<Route path="trips/:id" element={<Trips />} />
+						<Route path="flight-details" element={<FlightDetails />} />
 						<Route path="weather" element={<Weather />} />
 					</Route>
 				</Routes>

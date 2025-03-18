@@ -1,8 +1,10 @@
 import React from 'react';
+import { Destination } from '../types';
+import { useNavigate } from 'react-router-dom';
 
 interface DestinationDetailsProps {
   editedDestinations: any[];
-  handleDestinationChange: (e: React.ChangeEvent<HTMLInputElement>, index: number, field: string) => void;
+  handleDestinationChange: (e: React.ChangeEvent<HTMLInputElement>, index: number, field: keyof Destination) => void;
   isEditing: boolean;
 }
 
@@ -11,6 +13,12 @@ const DestinationDetails: React.FC<DestinationDetailsProps> = ({
   handleDestinationChange,
   isEditing,
 }) => {
+  const navigate = useNavigate();
+
+  const handleViewFlightDetails = (flightNumber: string) => {
+    navigate('/flight-details', { state: { flightNumber } });
+  };
+
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -119,6 +127,13 @@ const DestinationDetails: React.FC<DestinationDetailsProps> = ({
                 placeholder="Flight Number"
               />
             </div>
+            <button
+              onClick={() => handleViewFlightDetails(destination.flightNumber)}
+              className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition shadow-md me-4"
+              disabled={!destination.flightNumber}
+            >
+              View Flight Details
+            </button>
           </div>
         </div>
       ))}

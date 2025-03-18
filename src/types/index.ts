@@ -36,3 +36,23 @@ export interface Trip {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface FlightDetail {
+  airline: {
+    name: string;
+    iata: string;
+    icao: string;
+  };
+  arrival: {
+    actual: string;
+    airport: string;
+    scheduled: string;
+  };
+  departure: {
+    actual: string;
+    airport: string;
+    scheduled: string;
+  };
+  flight_date: string;
+  flight_status: string;  
+}
