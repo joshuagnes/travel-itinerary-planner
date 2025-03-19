@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Plane, User as UserIcon, LogOut, Menu } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
-import { supabase } from '../lib/supabase';
 import { auth } from '../firebaseConfig';
 
 export function Layout() {
@@ -12,7 +11,7 @@ export function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await auth.signOut();
     setUser(null);
     navigate('/');
   };
