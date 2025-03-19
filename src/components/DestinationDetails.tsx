@@ -2,10 +2,11 @@ import React from 'react';
 import { Destination } from '../types';
 import { useNavigate } from 'react-router-dom';
 
+// Define the props expected by the DestinationDetails component
 interface DestinationDetailsProps {
-  editedDestinations: any[];
-  handleDestinationChange: (e: React.ChangeEvent<HTMLInputElement>, index: number, field: keyof Destination) => void;
-  isEditing: boolean;
+  editedDestinations: any[]; // List of destinations being edited
+  handleDestinationChange: (e: React.ChangeEvent<HTMLInputElement>, index: number, field: keyof Destination) => void; // Function to handle input changes
+  isEditing: boolean; // Determines if inputs should be editable
 }
 
 const DestinationDetails: React.FC<DestinationDetailsProps> = ({
@@ -13,8 +14,9 @@ const DestinationDetails: React.FC<DestinationDetailsProps> = ({
   handleDestinationChange,
   isEditing,
 }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook for programmatic navigation
 
+  // Function to navigate to flight details page with flight number
   const handleViewFlightDetails = (flightNumber: string) => {
     navigate('/flight-details', { state: { flightNumber } });
   };
@@ -30,107 +32,34 @@ const DestinationDetails: React.FC<DestinationDetailsProps> = ({
           className="p-4 mb-4 bg-gray-50 rounded-lg shadow-sm"
         >
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <label
-                htmlFor={`name-${index}`}
-                className="w-28 text-sm font-medium text-gray-700"
-              >
-                Destination
-              </label>
-              <input
-                id={`name-${index}`}
-                className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                  isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                }`}
-                type="text"
-                value={destination.name || ''}
-                onChange={(e) => handleDestinationChange(e, index, 'name')}
-                disabled={!isEditing}
-                placeholder="Destination"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <label
-                htmlFor={`city-${index}`}
-                className="w-28 text-sm font-medium text-gray-700"
-              >
-                City
-              </label>
-              <input
-                id={`city-${index}`}
-                className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                  isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                }`}
-                type="text"
-                value={destination.city || ''}
-                onChange={(e) => handleDestinationChange(e, index, 'city')}
-                disabled={!isEditing}
-                placeholder="City"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <label
-                htmlFor={`hotel-${index}`}
-                className="w-28 text-sm font-medium text-gray-700"
-              >
-                Hotel
-              </label>
-              <input
-                id={`hotel-${index}`}
-                className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                  isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                }`}
-                type="text"
-                value={destination.hotel || ''}
-                onChange={(e) => handleDestinationChange(e, index, 'hotel')}
-                disabled={!isEditing}
-                placeholder="Hotel"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <label
-                htmlFor={`address-${index}`}
-                className="w-28 text-sm font-medium text-gray-700"
-              >
-                Address
-              </label>
-              <input
-                id={`address-${index}`}
-                className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                  isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                }`}
-                type="text"
-                value={destination.address || ''}
-                onChange={(e) => handleDestinationChange(e, index, 'address')}
-                disabled={!isEditing}
-                placeholder="Address"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <label
-                htmlFor={`flightNumber-${index}`}
-                className="w-28 text-sm font-medium text-gray-700"
-              >
-                Flight Number
-              </label>
-              <input
-                id={`flightNumber-${index}`}
-                className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
-                  isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
-                }`}
-                type="text"
-                value={destination.flightNumber || ''}
-                onChange={(e) =>
-                  handleDestinationChange(e, index, 'flightNumber')
-                }
-                disabled={!isEditing}
-                placeholder="Flight Number"
-              />
-            </div>
+            {/* Input fields for destination details */}
+            {['name', 'city', 'hotel', 'address', 'flightNumber'].map((field) => (
+              <div key={field} className="flex items-center gap-3">
+                <label
+                  htmlFor={`${field}-${index}`}
+                  className="w-28 text-sm font-medium text-gray-700"
+                >
+                  {field.charAt(0).toUpperCase() + field.slice(1)}
+                </label>
+                <input
+                  id={`${field}-${index}`}
+                  className={`flex-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${
+                    isEditing ? 'border-gray-300' : 'border-gray-200 bg-gray-50'
+                  }`}
+                  type="text"
+                  value={destination[field] || ''}
+                  onChange={(e) => handleDestinationChange(e, index, field as keyof Destination)}
+                  disabled={!isEditing}
+                  placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                />
+              </div>
+            ))}
+
+            {/* Button to view flight details */}
             <button
               onClick={() => handleViewFlightDetails(destination.flightNumber)}
               className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition shadow-md me-4"
-              disabled={!destination.flightNumber}
+              disabled={!destination.flightNumber} // Disable button if no flight number
             >
               View Flight Details
             </button>
