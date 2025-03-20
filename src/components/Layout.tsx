@@ -7,30 +7,27 @@ import { auth } from '../firebaseConfig';
 import NavLink from './NavLink';
 
 export function Layout() {
-  // Get user authentication state
   const { user, setUser } = useAuthStore();
-  const location = useLocation(); // Get current URL path
-  const navigate = useNavigate(); // Navigation function
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State to toggle mobile menu
+  const location = useLocation(); 
+  const navigate = useNavigate(); 
+  const [isMenuOpen, setIsMenuOpen] = useState(false); 
 
-  // Logout function
   const handleLogout = async () => {
-    await auth.signOut(); // Sign out user
-    setUser(null); // Clear user state
-    navigate('/'); // Redirect to homepage
+    await auth.signOut(); 
+    setUser(null); 
+    navigate('/'); 
   };
 
-  // Define which pages have a background image
   const pathsWithBackground = ['/'];
   const hasBackground = pathsWithBackground.includes(location.pathname);
 
   return (
     <div className={`min-h-screen ${hasBackground ? 'bg-home bg-cover bg-center' : 'bg-gray-100'}`}>
-      {/* Navigation Bar */}
+  
       <nav className="bg-white/80 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
+   
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
                 <Plane className="h-8 w-8 text-blue-600" />
@@ -38,7 +35,7 @@ export function Layout() {
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
+ 
             <div className="hidden md:flex space-x-8">
               {user && (
                 <>
@@ -49,7 +46,6 @@ export function Layout() {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
             <button
               className="md:hidden p-2 text-gray-700"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -57,7 +53,6 @@ export function Layout() {
               <Menu className="h-6 w-6" />
             </button>
 
-            {/* User Authentication Section */}
             <div className="hidden md:flex items-center space-x-4">
               {user ? (
                 <>
@@ -76,7 +71,6 @@ export function Layout() {
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-300">
             <div className="px-2 pt-2 pb-3 space-y-1">
@@ -92,7 +86,7 @@ export function Layout() {
         )}
       </nav>
 
-      {/* Main Content */}
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Outlet />
       </main>

@@ -9,7 +9,6 @@ import rain_icon from '../assets/rain.png';
 import snow_icon from '../assets/snow.png';
 import wind_icon from '../assets/wind.png';
 
-// Define the WeatherData interface
 interface WeatherData {
   humidity: number;
   windSpeed: string;
@@ -49,14 +48,12 @@ const Weather: React.FC = () => {
     '13n': snow_icon,
   };
 
-  // Utility function to convert wind degrees to direction
   const getWindDirection = (degrees: number): string => {
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     const index = Math.round(degrees / 45) % 8;
     return directions[index];
   };
 
-  // Utility function to convert Unix timestamp to time
   const formatTime = (timestamp: number, timezoneOffset: number): string => {
     const date = new Date((timestamp + timezoneOffset) * 1000);
     const hours = date.getUTCHours().toString().padStart(2, '0');

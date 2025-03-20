@@ -56,3 +56,4 @@ export interface FlightDetail {
   flight_date: string;
   flight_status: string;  
 }
+

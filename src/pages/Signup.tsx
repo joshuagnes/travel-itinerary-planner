@@ -45,10 +45,7 @@ export function Signup() {
 
   return (
     <div className="relative min-h-screen flex flex-col justify-center items-center bg-home">
-      {/* Overlay for better readability */}
       <div className="absolute inset-0 bg-white/20 backdrop-blur-sm"></div>
-
-      {/* Content wrapper to ensure it stays in front */}
       <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md p-6 text-center">
         <div className="flex justify-center">
           <Plane className="h-12 w-12 text-blue-600" />

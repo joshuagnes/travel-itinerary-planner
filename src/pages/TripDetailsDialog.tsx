@@ -5,7 +5,7 @@ export interface TripDetails {
   city: string;
   flightNumber: string;
   hotel: string;
-  name: string; // Assuming this is the trip name
+  name: string;
 }
 
 const TripDetailsDialog = ({ isOpen, onClose, onConfirm }: { isOpen: boolean; onClose: () => void; onConfirm: (details: TripDetails) => void }) => {
