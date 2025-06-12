@@ -42,6 +42,7 @@ export function Layout() {
                   <NavLink to="/dashboard">Dashboard</NavLink>
                   <NavLink to="/trips/new">New Trip</NavLink>
                   <NavLink to="/weather">Weather Forecast</NavLink>
+                  
                 </>
               )}
             </div>
@@ -79,6 +80,7 @@ export function Layout() {
                   <NavLink to="/dashboard" mobile>Dashboard</NavLink>
                   <NavLink to="/trips/new" mobile>New Trip</NavLink>
                   <NavLink to="/weather" mobile>Weather Forecast</NavLink>
+                  
                 </>
               )}
             </div>
