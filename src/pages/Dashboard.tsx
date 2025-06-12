@@ -16,11 +16,10 @@ export function Dashboard() {
   useEffect(() => {
     async function fetchTrips() {
       try {
-        // Query to get trips for the logged-in user
+
         const tripsQuery = query(tripsCollection, where('userId', '==', user?.id));
         const tripsDoc = await getDocs(tripsQuery);
 
-        // Map through the trips and fetch destinations concurrently
         const fetchedTrips: Trip[] = await Promise.all(
           tripsDoc.docs.map(async (doc) => {
             const data = doc.data();
@@ -36,7 +35,6 @@ export function Dashboard() {
               destinations: [], 
             };
 
-            // Fetch destinations for the current trip
             const destinationsQuery = query(destCollection, where('tripId', '==', doc.id));
             const destinationsDoc = await getDocs(destinationsQuery);
             const destinations = destinationsDoc.docs.map((destDoc) => {
@@ -52,12 +50,10 @@ export function Dashboard() {
               };
             });
 
-            // Return the trip with its destinations
             return { ...trip, destinations };
           })
         );
 
-        // Set the state once all trips and destinations are fetched
         setTrips(fetchedTrips);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch trips');

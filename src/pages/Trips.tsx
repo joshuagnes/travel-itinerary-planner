@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
-
   MapPin,
   Loader2,
   Trash,
@@ -23,28 +22,7 @@ import {
 import TripDetails from '../components/TripDetails';
 import DestinationDetails from '../components/DestinationDetails';
 import FormControl from '../components/FormControl';
-
-interface Destination {
-  id: string;
-  address: string;
-  city: string;
-  flightNumber: string;
-  hotel: string;
-  name: string;
-  tripId: string;
-}
-
-interface Trip {
-  id: string;
-  title: string;
-  description: string;
-  startDate: Date;
-  endDate: Date;
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
-  destinations: Destination[];
-}
+import { Destination, Trip } from '../types';
 
 export function Trips() {
   const [trip, setTrip] = useState<Trip | null>(null);
